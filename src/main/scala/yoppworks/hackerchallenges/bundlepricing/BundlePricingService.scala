@@ -22,13 +22,8 @@ class BundlePricingService(catalog: Seq[CatalogItem], bundlePromotions: Seq[Bund
     *   Failure: InvalidCartException if the cart isn't valid (contains an item which doesn't exist in catalog)
     */
   def bundleCartToLowestPrice(cart: Cart) =
-			if(!isCartValid(cart)) Failure(InvalidCartException)
-			else {
-				Try(loop(cart)) match {
-					case Success(future) => future.valu
-						case Failure(d) => Failure(InvalidCartException)
-				}
-			}
+			if(!isCartValid(cart)) Future.failed(InvalidCartException)
+			else loop(cart)
 
 
   private def loop(initCart: Cart): Future[Price] = {
