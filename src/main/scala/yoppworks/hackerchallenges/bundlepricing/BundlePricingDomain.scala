@@ -14,7 +14,7 @@ object BundlePricingDomain {
 
   // Cart data
   case class CatalogItem(name: String, unitPrice: Price)
-  case class Cart(cartItemsParam: Seq[CartItem]) { val cartItems = BundlePricingUtil.groupCartItem(cartItemsParam) }
+  case class Cart(cartItemsParam: Seq[CartItem]) { val cartItems: Seq[CartItem] = BundlePricingUtil.groupCartItem(cartItemsParam) }
   case class CartItem(catalogItem: CatalogItem, quantity: Quantity){
         val cartItemTotalPrice: Int = catalogItem.unitPrice.value * quantity.value
   }
@@ -23,7 +23,7 @@ object BundlePricingDomain {
 
   // Wrapper type for Units
   class Quantity private (val value: Int) extends AnyVal { //  1 <= Integer <= 99
-    override def toString = "Qt " + value.toString
+    override def toString: String = "Qt " + value.toString
   }
   
   object Quantity {
@@ -35,7 +35,7 @@ object BundlePricingDomain {
   
   class Price private (val value: Int) extends AnyVal { //  0 <= Integer
     // as price is in cents example 2250 => $22.50, need to convert in nice looking price
-    override def toString = value.toString.dropRight(2) + "." + value.toString.takeRight(2)
+    override def toString: String = value.toString.dropRight(2) + "." + value.toString.takeRight(2)
   }
   
   object Price {
@@ -66,8 +66,8 @@ object BundlePromotions {
    cartItemsParams: Seq[CartItem], // how we detect the pattern
    totalPrice: Price // the discount
    ) extends BundlePromotion {
-    def cartItems = BundlePricingUtil.groupCartItem(cartItemsParams)
-    def totalDiscountedPrice = totalPrice
+    def cartItems: Seq[CartItem] = BundlePricingUtil.groupCartItem(cartItemsParams)
+    def totalDiscountedPrice: Price = totalPrice
     override def toString = cartItems + " => Total " + totalDiscountedPrice
   }
   
@@ -82,9 +82,9 @@ object BundlePromotions {
    */
   class BundleDiscountOnItemUnitPrice(discountedItems: Seq[MaybeDiscountedItem]) extends BundlePromotion {
     
-    def cartItems = BundlePricingUtil.groupCartItem(discountedItems.map(_.cartItem))
+    def cartItems: Seq[CartItem] = BundlePricingUtil.groupCartItem(discountedItems.map(_.cartItem))
     
-    def totalDiscountedPrice = {
+    def totalDiscountedPrice: Price = {
       val itemsPrices = discountedItems.map{itemWrapper => itemWrapper.optionalUnitPriceOverride match {
           case Some(discountedPrice) =>
             discountedPrice.value * itemWrapper.cartItem.quantity.value
@@ -94,7 +94,7 @@ object BundlePromotions {
       }
       Price(itemsPrices.sum)
     }
-    override def toString = discountedItems.toString()
+    override def toString: String = discountedItems.toString()
   }
   
   
