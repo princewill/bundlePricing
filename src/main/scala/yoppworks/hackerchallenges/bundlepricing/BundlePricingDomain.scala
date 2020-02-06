@@ -14,7 +14,9 @@ object BundlePricingDomain {
 
   // Cart data
   case class CatalogItem(name: String, unitPrice: Price)
-  case class Cart(cartItemsParam: Seq[CartItem]) { val cartItems: Seq[CartItem] = BundlePricingUtil.groupCartItem(cartItemsParam) }
+  case class Cart(cartItemsParam: Seq[CartItem]) {
+    val cartItems: Seq[CartItem] = BundlePricingUtil.groupCartItem(cartItemsParam)
+  }
   case class CartItem(catalogItem: CatalogItem, quantity: Quantity){
         val cartItemTotalPrice: Int = catalogItem.unitPrice.value * quantity.value
   }
